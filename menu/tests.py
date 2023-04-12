@@ -38,16 +38,27 @@ class BaseViewTest(TestCase):
 
 class MenuTag(TestCase):
     def setUp(self) -> None:
-        self.parent = Menu.objects.create(title='Title_1')
-        self.parent2 = Menu.objects.create(title='Title_2')
+        self.parent = Menu.objects.create(title='Title_1', branch=1)
+        self.parent2 = Menu.objects.create(title='Title_2', branch=2)
         self.children_1 = Menu.objects.create(title='Title_1_1', parent_id=self.parent.id)
-        self.parent3 = Menu.objects.create(title='Title3')
+        self.parent3 = Menu.objects.create(title='Title3', branch=3)
         self.children_2 = Menu.objects.create(title='Title_1_2', parent_id=self.parent.id)
-        self.parent4 = Menu.objects.create(title='Title4')
+        self.parent4 = Menu.objects.create(title='Title4', branch=4)
         self.children_1_1 = Menu.objects.create(title='Title_1_1_1', parent_id=self.children_1.id)
         self.children3_1 = Menu.objects.create(title='Title3_1', parent_id=self.parent3.id)
         self.children_1_2 = Menu.objects.create(title='Title_1_1_2', parent_id=self.children_1.id)
         self.item = Menu.objects.all().values()
     def test_template_tag(self):
         print('Вот он!!!', get_menu(self.item), '|||')
-        assert get_menu(self.item) == '<ul>'
+        assert get_menu(self.item) ==  '<ul><li><a href="">Title_1</a>' \
+                                            '<ul><li><a href="">Title_1_1</a>' \
+                                                '<ul><li><a href="">Title_1_1_1</a></li>' \
+                                                '<li><a href="">Title_1_1_2</a></li></ul>' \
+                                       '</li>' \
+                                            '<li><a href="">Title_1_2</a></li></ul>' \
+                                       '</li>' \
+                                       '<li><a href="">Title_2</a></li>' \
+                                       '<li><a href="">Title3</a>' \
+                                            '<ul><li><a href="">Title3_1</a></li></ul>' \
+                                       '</li>' \
+                                       '<li><a href="">Title4</a></li></ul>'

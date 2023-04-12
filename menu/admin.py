@@ -8,11 +8,11 @@ class MenuFormAdmin(forms.ModelForm):
 
     class Meta:
         model = Menu
-        fields = ['title']
+        fields = ['title', 'branch', 'url']
 class MenuAdmin(admin.ModelAdmin):
-    list_display = ('title', 'parent_title')
-    search_fields = ('title', 'parent_title')
-    ordering = ('title',)
+    list_display = ('title', 'parent_title', 'branch', 'url')
+    search_fields = ('title', 'parent_title', 'branch')
+    ordering = ('branch', 'title')
     form = MenuFormAdmin
 
     def parent_title(self, obj):
@@ -26,6 +26,7 @@ class MenuAdmin(admin.ModelAdmin):
             parent_title = form.cleaned_data['parent_title']
             parent = Menu.objects.get(title=parent_title)
             obj.parent_id = parent.pk
+            obj.branch = parent.branch
         else:
             obj.parent_id = None
         obj.save()

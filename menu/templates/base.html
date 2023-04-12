@@ -1,14 +1,10 @@
 {% load menu_tag %}
-{% draw_menu 'main_menu' %}
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link type="text/css" href="{% static 'menu_style.css' %}" rel="stylesheet" />
 </head>
 <body>
-{{ context }}
-</body>
-</html>
+
+{% draw_menu %}

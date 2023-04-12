@@ -1,22 +1,14 @@
+{% load menu_tag %}
+{% draw_menu 'main_menu' %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link type="text/css" href="{% static 'menu_style.css' %}" rel="stylesheet" />
 </head>
 <body>
-{% load menu_tag%}
-{% get_menu as menu %}
-<ul>
-    {% for item in menu %}
-        {% if item.parent is None %}
-            <li>{{ item.title }}</li>
-            {% for child in item.children.all %}
-                {% include 'item.html' with item=child %}
-            {% endfor %}
-        {% endif %}
-    {% endfor %}
-</ul>
 {{ context }}
 </body>
 </html>

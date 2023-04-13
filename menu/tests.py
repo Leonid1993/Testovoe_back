@@ -5,11 +5,11 @@ from .templatetags.menu_tag import get_menu
 
 class MenuModelTest(TestCase):
     def setUp(self) -> None:
-        self.parent = Menu.objects.create(title='Title_1')
-        self.children_1 = Menu.objects.create(title='Title_1_1', parent_id=self.parent.id)
-        self.children_2 = Menu.objects.create(title='Title_1_2', parent_id=self.parent.id)
-        self.children_1_1 = Menu.objects.create(title='Title_1_1_1', parent_id=self.children_1.id)
-        self.children_1_2 = Menu.objects.create(title='Title_1_1_2', parent_id=self.children_1.id)
+        self.parent = Menu.objects.create(title='Title_1', url='parent')
+        self.children_1 = Menu.objects.create(title='Title_1_1', parent_id=self.parent.id, url='child1')
+        self.children_2 = Menu.objects.create(title='Title_1_2', parent_id=self.parent.id, url='child2')
+        self.children_1_1 = Menu.objects.create(title='Title_1_1_1', parent_id=self.children_1.id, url='child1_1')
+        self.children_1_2 = Menu.objects.create(title='Title_1_1_2', parent_id=self.children_1.id, url='child1_2')
 
     def test_menu(self):
         parent_id = Menu.objects.get(title='Title_1').id
@@ -48,7 +48,7 @@ class MenuTag(TestCase):
         self.children3_1 = Menu.objects.create(title='Title3_1', parent_id=self.parent3.id, url='children3_1')
         self.children_1_2 = Menu.objects.create(title='Title_1_1_2', parent_id=self.children_1.id, url='children_1_2')
         self.item = Menu.objects.all().values()
-    def test_template_tag(self):
+    def test_template_tag(self) -> str:
         print('Вот он!!!', get_menu(self.item))
         assert get_menu(self.item) ==  '<ul><li><a href="/parent">Title_1</a></li>' \
                                        '<ul><li><a href="/children1">Title_1_1</a></li>' \
@@ -64,3 +64,17 @@ class MenuTag(TestCase):
                                        '</li></ul></li>' \
                                        '<li><a href="/parent4">Title4</a></li></li></ul>'
 
+class Signals(TestCase):
+    def setUp(self) -> None:
+        self.parent = Menu.objects.create(title='Title_1', branch=1, url='parent')
+        self.children_1 = Menu.objects.create(title='Title_1_1', parent_id=self.parent.id, url='children1')
+        self.children_2 = Menu.objects.create(title='Title_1_2', parent_id=self.parent.id, url='children2')
+        self.children_1_1 = Menu.objects.create(title='Title_1_1_1', parent_id=self.children_1.id, url='children1_1')
+        obj = Menu.objects.get(pk=self.children_1_1.pk)
+        print(obj.parent_id)
+        obj.parent_id = self.parent.id
+        obj.save()
+        print(obj.parent_id)
+
+    def test_signal(self) -> str:
+        assert Menu.objects.get(title='Title_1_1_1').level == Menu.objects.get(title='Title_1_1').level

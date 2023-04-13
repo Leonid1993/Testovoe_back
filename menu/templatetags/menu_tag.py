@@ -4,6 +4,7 @@ from menu.models import Menu
 from typing import List
 register = template.Library()
 from django.urls import reverse
+
 @register.simple_tag()
 def draw_menu() -> str:
     menu_items = Menu.objects.all().values()
@@ -27,4 +28,5 @@ def get_menu(menu_items: List, menu: str = '', parent_id: int = None, repeat: Li
                 repeat.extend(child)
             menu += '</li>'
     menu += '</ul>'
+    print(menu)
     return menu

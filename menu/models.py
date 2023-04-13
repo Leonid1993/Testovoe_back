@@ -5,6 +5,12 @@ class Menu(models.Model):
     parent_id = models.IntegerField(null=True)
     url = models.SlugField()
     branch = models.IntegerField(default=0, verbose_name='Ветка меню')
+    level = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        if self.parent_id:
+            self.level = Menu.objects.get(pk=self.parent_id).level + 1
+        super(Menu, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -12,4 +18,6 @@ class Menu(models.Model):
     class Meta:
         verbose_name = 'Меню'
         verbose_name_plural = 'Меню'
-        ordering = ['branch', 'title']
+        ordering = ['level', 'branch', 'title']
+
+
